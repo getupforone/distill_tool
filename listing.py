@@ -9,10 +9,10 @@ data_list_dir_path='../datalists'
 
 
 if os.path.isdir(data_list_dir_path):
-	print("data_list_dir_path exists :{}".format(data_list_dir_path)
+    print("data_list_dir_path exists :{}".format(data_list_dir_path))
 else:
-	os.mkdir(data_list_dir_path)
-	print("make data_list_dir_path done :{}".format(data_list_dir_path)
+    os.mkdir(data_list_dir_path)
+    print("make data_list_dir_path done :{}".format(data_list_dir_path))
 
 for data_dir_path in data_dir_paths:
     dir_name_list = np.sort(os.listdir(data_dir_path))
