@@ -7,10 +7,16 @@ src_dir='../zip'
 dst_dir='../dataset'
 
 def unzip_func(src_path, dst_path):
-	print("unzip {} => {}\n".format(src_path,dst_path))
-	unzip_inst = zipfile.ZipFile(src_path)
-	unzip_inst.extractall(dst_path)
-	unzip_inst.close()
+    print("unzip {} => {}\n".format(src_path,dst_path))
+    unzip_inst = zipfile.ZipFile(src_path)
+    src_name = os.path.basename(src_path)
+    dst_dir = os.path.join(dst_path, src_name)
+    print("unzip : dst_dir = {}\n".format(dst_dir))
+    if os.path.exists(dst_dir):
+        print("unzip : {} is exists and skip".format(dst_path))
+    else:
+        unzip_inst.extractall(dst_path)
+        unzip_inst.close()
 
 pool = mp.Pool(mp.cpu_count())
 file_name_lists = np.sort(os.listdir(src_dir))
