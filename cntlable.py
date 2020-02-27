@@ -4,10 +4,12 @@ from matplotlib import pyplot as plt
 
 label_dir_path="../cntlabel"
 label_file_name = "cntlabel.txt"
+cnt_file_name = "cnt.txt"
 data_dir_paths = ['../dataset']
 file_num_dict = {}
 cnt_label_dict = {}
 cnt_threshold = 500
+cnt_threshold_valid = 20
 true_label_cnt = 0
 false_label_cnt = 0
 for data_dir_path in data_dir_paths:
@@ -20,19 +22,30 @@ for data_dir_path in data_dir_paths:
             if os.path.isdir(dir_path):
                 file_name_list = np.sort(os.listdir(dir_path))
                 num_of_files = len(file_name_list)
-                file_num_dict[dir_name] = num_of_files
                 if num_of_files > cnt_threshold :
+                    file_num_dict[dir_name] = num_of_files
                     cnt_label_dict[dir_name] = (dir_path,True)
                     true_label_cnt = true_label_cnt + 1
-                else:
+                elif num_of_files < cnt_threshold and num_of_files > cnt_threshold_valid:
+                    file_num_dict[dir_name] = num_of_files
                     cnt_label_dict[dir_name] = (dir_path,False)
                     false_label_cnt = false_label_cnt + 1
+                else:
+                    print("invalid cnt number={}".format(num_of_files))
     
     label_file_path = os.path.join(label_dir_path, label_file_name)
     with open(label_file_path, 'w') as file_write_obj:
         for k,v in cnt_label_dict.items():
             (dir_path, label) = v
             lines="{}   {}\n".format(v[0], v[1])
+            print(lines)
+            file_write_obj.writelines(lines)
+    cnt_file_path = os.path.join(label_dir_path, cnt_file_name)
+    with open(cnt_file_path, 'w') as file_write_obj:
+        for k,v in file_num_dict.items():
+            dir_name  = k
+            num_of_files = v
+            lines="{}   {}\n".format(k, v)
             print(lines)
             file_write_obj.writelines(lines)
 print("true label = {} / false label = {}".format(true_label_cnt, false_label_cnt))

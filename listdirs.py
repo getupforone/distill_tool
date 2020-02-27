@@ -1,6 +1,7 @@
 
 import os
 import numpy as np
+import random
 
 dataset_paths = '../dataset'
 dir_list_path='../dirlist'
@@ -54,18 +55,21 @@ print("num_of_val_dir = {}".format(num_of_val_dir))
 
 print("diff = {}".format(num_of_dir - num_of_train_dir -num_of_test_dir -num_of_val_dir))
 
+random_index = random.sample(range(0,num_of_dir),num_of_dir)
+dir_path_lists_np = np.array(dir_path_lists)
+dir_path_lists_rand = dir_path_lists_np[random_index]
 
-train_path_lists = dir_path_lists[0:num_of_train_dir] # 0~ num_of_train_dir-1
+train_path_lists = dir_path_lists_rand[0:num_of_train_dir] # 0~ num_of_train_dir-1
 train_label_lists = dir_label_lists[0:num_of_train_dir] # 0~ num_of_train_dir-1
 print("num train_path_lists = {}".format(len(train_path_lists)))
 print("train_path_lists = {}".format(train_path_lists))
 
-test_path_lists = dir_path_lists[num_of_train_dir:num_of_train_dir + num_of_test_dir] #num_of_train_dir ~ num_of_train_dir + num_of_test_dir -1
+test_path_lists = dir_path_lists_rand[num_of_train_dir:num_of_train_dir + num_of_test_dir] #num_of_train_dir ~ num_of_train_dir + num_of_test_dir -1
 test_label_lists = dir_label_lists[num_of_train_dir:num_of_train_dir + num_of_test_dir] #num_of_train_dir ~ num_of_train_dir + num_of_test_dir -1
 print("num test_path_lists = {}".format(len(test_path_lists)))
 print("train_path_lists = {}".format(test_path_lists))
 
-val_path_lists = dir_path_lists[num_of_train_dir + num_of_test_dir:]
+val_path_lists = dir_path_lists_rand[num_of_train_dir + num_of_test_dir:]
 val_label_lists = dir_label_lists[num_of_train_dir + num_of_test_dir:]
 print("num test_path_lists = {}".format(len(val_path_lists)))
 print("train_path_lists = {}".format(val_path_lists))

@@ -7,10 +7,10 @@ rm_img_dir_path='../rmimgs'
 
 
 if os.path.isdir(rm_img_dir_path):
-	print("rm_img_dir_path exists :{}".format(rm_img_dir_path)
+	print("rm_img_dir_path exists :{}".format(rm_img_dir_path))
 else:
 	os.mkdir(rm_img_dir_path)
-	print("make rm_img_dir_path done :{}".format(rm_img_dir_path)
+	print("make rm_img_dir_path done :{}".format(rm_img_dir_path))
 
 
 if os.path.exists(rm_img_dir_path)==False:
