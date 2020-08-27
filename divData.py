@@ -4,9 +4,10 @@ import numpy as np
 import random
 
 dataset_paths = '../dataset'
-dir_list_path='../dirlist'
-#cnt_label_path='../cntlabel/cntlabel.txt'
-cnt_label_path='../cntlabel/binlabel.txt'
+#dir_list_path='../dirlist'
+dir_list_path='../dirlist_3label'
+
+cnt_label_path='../cntlabel/threelabel.txt'
 
 train_ratio=80
 test_ratio=15
@@ -23,6 +24,7 @@ dir_path_lists = []
 dir_label_lists = []
 false_cnt = 0
 true_cnt = 0
+disrupt_cnt = 0
 
 num_of_dir = 0
 if init_from_cntlabel == False:
@@ -47,13 +49,15 @@ elif init_from_cntlabel == True:
                     true_cnt = true_cnt +1;
                 elif label=="False":
                     false_cnt = false_cnt +1;
+                elif label=="Disrupt":
+                    disrupt_cnt = disrupt_cnt +1;
                 dir_label_lists.append(label)
                 #print("path = {}/ label = {}\n".format(path,label))
     else:
         print("cnt_label_path {} does not exist".format(cnt_label_path))
     
 
-print("positive sample count = {} || negative sample count ={}".format(true_cnt,false_cnt))
+print("positive sample count = {} || negative sample count ={}|| disrupt sample count = {}".format(true_cnt,false_cnt,disrupt_cnt))
 print("num_of_dir = {}".format(num_of_dir))
 num_of_train_dir = int(num_of_dir/100*train_ratio)
 print("num_of_train_dir = {}".format(num_of_train_dir))

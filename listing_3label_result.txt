@@ -1,0 +1,15 @@
+data_list_dir_path exists :../datalists
+num_of_dir = 1530
+num_of_train_dir = 1224
+num_of_test_dir = 229
+num_of_val_dir = 76
+diff = 1
+num train_shotnum_lists = 1224
+num test_shotnum_lists = 229
+num test_shotnum_lists = 77
+/data/KSTAR_TV_DATASET/imglist_3label/train
+make data_list_dir_path done :/data/KSTAR_TV_DATASET/imglist_3label/train
+/data/KSTAR_TV_DATASET/imglist_3label/test
+make data_list_dir_path done :/data/KSTAR_TV_DATASET/imglist_3label/test
+/data/KSTAR_TV_DATASET/imglist_3label/val
+make data_list_dir_path done :/data/KSTAR_TV_DATASET/imglist_3label/val
