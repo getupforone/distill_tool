@@ -6,13 +6,16 @@ import random
 
 data_dir_paths = ['../dataset']
 data_list_dir_path='../datalists'
-data_img_list_dir_path='/data/KSTAR_TV_DATASET/imglist_3label'
-cnt_label_path='../cntlabel/threelabel.txt'
+data_img_list_dir_path='/data/KSTAR_TV_DATASET/imglist_3label2'
+cnt_label_path='../cntlabel/threelabel2.txt'
 
-disrupt_th = 21
+rampdown_label_num = 15
+
 train_ratio=80
 test_ratio=15
 val_ratio=5
+
+
 
 if os.path.isdir(data_list_dir_path):
     print("data_list_dir_path exists :{}".format(data_list_dir_path))
@@ -23,14 +26,15 @@ else:
 
 dir_path_lists = []
 dir_label_lists = []
+dir_dirsupt_limit_lists = []
 shotnum_list = []
 index_shotnum_dic = {}
 if os.path.exists(cnt_label_path):
     with open(cnt_label_path, 'r') as file_read_obj:
         #lines = file_read_obj.read().splitlines())
         for idx, path_label in enumerate(file_read_obj.read().splitlines()):
-            assert len(path_label.split()) == 2
-            path, label = path_label.split()
+            assert len(path_label.split()) == 3
+            path, label,disrupt_limit_str = path_label.split()
             dir_path_lists.append(path)
             num_of_dir = len(dir_path_lists)
             #print(label)
@@ -41,6 +45,8 @@ if os.path.exists(cnt_label_path):
             # elif label=="Disrupt":
             #     disrupt_cnt = disrupt_cnt +1;
             dir_label_lists.append(label)
+            disrupt_limit = int(disrupt_limit_str)
+            dir_dirsupt_limit_lists.append(disrupt_limit)
             shot_num= os.path.splitext(os.path.splitext(os.path.basename(path))[0])[0]
             # print(shot_num)
             index_shotnum_dic[shot_num]=idx
@@ -111,10 +117,11 @@ for data_dir_path in data_dir_paths:
                file_name_list = np.sort(os.listdir(src_dir_path))
               
                curr_label = dir_label_lists[curr_idx]
+               curr_disrupt_limit = dir_dirsupt_limit_lists[curr_idx]
             #    print(curr_label)
                seq_list_file_name = "{}.txt".format(dir_name)
                seq_list_file_name_D = "{}_D.txt".format(dir_name)
-               seq_list_file_name_F = "{}_F.txt".format(dir_name)
+               seq_list_file_name_T = "{}_T.txt".format(dir_name)
                cat_name = 'train'
                if curr_shotnum in train_shotnum_lists :
                    cat_name = 'train'
@@ -124,22 +131,31 @@ for data_dir_path in data_dir_paths:
                    cat_name = 'val'
                seq_list_file_path = os.path.join(os.path.join(data_img_list_dir_path,cat_name), seq_list_file_name)
                seq_list_file_path_D = os.path.join(os.path.join(data_img_list_dir_path,cat_name), seq_list_file_name_D)
+               seq_list_file_path_T = os.path.join(os.path.join(data_img_list_dir_path,cat_name), seq_list_file_name_T)
                num_of_file = len(file_name_list)
-               
-               true_label_num = num_of_file - disrupt_th
-               if true_label_num  > 0:
+
+               other_label_num = num_of_file - rampdown_label_num
+               if curr_label == 'Disrupt':
+                   other_label_num = curr_disrupt_limit - 1
+                   if (num_of_file - other_label_num) < 12 :
+                       print("{} disruption frame num is smaller then 12 num_of_file = {} limit_num = {}", curr_shotnum,num_of_file  ,curr_disrupt_limit )
+               if other_label_num  > 0:
                 file_write_obj = open(seq_list_file_path,'w')
                 if curr_label == 'Disrupt':
                     file_write_obj_D = open(seq_list_file_path_D,'w')
+                elif curr_label == 'True':
+                    file_write_obj_T = open(seq_list_file_path_T,'w')
                 ind_DD = 0 #Disrupt shot label /Disrutp frame label
                 ind_DT = 0 #Disrupt shot label /True frame label
-                ind_ND = 0 #Non Disrupt shot label
+                ind_T = 0 #Disrupt shot label 
+                ind_TRD = 0 #Disrupt shot label /rampdown frame label
+                ind_TF = 0 #Non Disrupt shot label
                 for f_ind, file_name in enumerate(file_name_list):
                     f_label = curr_label
                     file_path = os.path.join(src_dir_path,file_name)
 
                     if curr_label == 'Disrupt':
-                        if f_ind > true_label_num :
+                        if f_ind > other_label_num :
 
                             f_label = 'Disrupt'     
                             line = "{}   {}".format(file_path,f_label)    
@@ -154,14 +170,26 @@ for data_dir_path in data_dir_paths:
                                 file_write_obj.write('\n')
                             file_write_obj.writelines(line)
                             ind_DT = ind_DT + 1
-
-                            
-                    elif curr_label != 'Disrupt':
-                        line = "{}   {}".format(file_path,f_label)                                                
-                        if ind_ND != 0:
+                    elif curr_label == 'True':
+                        f_label = 'True'
+                        line = "{}   {}".format(file_path,f_label)
+                        if f_ind > other_label_num :
+                            if ind_TRD != 0:  
+                                file_write_obj_T.write('\n') 
+                            file_write_obj_T.writelines(line)  
+                            ind_TRD  = ind_TRD +1
+                        if ind_TF != 0:
                             file_write_obj.write('\n')
                         file_write_obj.writelines(line)
-                        ind_ND = ind_ND + 1
+                        ind_TF = ind_TF + 1
+                            
+                    elif curr_label == 'False':
+                        f_label = 'False'
+                        line = "{}   {}".format(file_path,f_label)                                                
+                        if ind_TF != 0:
+                            file_write_obj.write('\n')
+                        file_write_obj.writelines(line)
+                        ind_TF = ind_TF + 1
                         
 
 
