@@ -4,9 +4,9 @@ import numpy as np
 import random
 
 
-data_dir_paths = ['../dataset']
+data_dir_paths = ['../dataset_rz']
 data_list_dir_path='../datalists'
-data_img_list_dir_path='/data/KSTAR_TV_DATASET/imglist_2label'
+data_img_list_dir_path='../imglist_2label'
 cnt_label_path='../cntlabel/twolabel.txt'
 
 rampdown_label_num = 15
@@ -34,7 +34,7 @@ if os.path.exists(cnt_label_path):
         #lines = file_read_obj.read().splitlines())
         for idx, path_label in enumerate(file_read_obj.read().splitlines()):
             assert len(path_label.split()) == 3
-            path, label,disrupt_limit_str = path_label.split()
+            path, label, disrupt_limit_str = path_label.split()
             dir_path_lists.append(path)
             num_of_dir = len(dir_path_lists)
             #print(label)
@@ -104,7 +104,9 @@ for dir_path in dir_path_list:
         os.mkdir(dir_path)
         print("make data_list_dir_path done :{}".format(dir_path))
 
-for data_dir_path in data_dir_paths:
+for data_dir_path in data_dir_paths: 
+    # data_dir_paths = ./dataset
+    # data_dir_path = ./dataset/019900 ...
     dir_name_list = np.sort(os.listdir(data_dir_path))
     # print("dir_name_list = P{}".format(dir_name_list))
     for ind, dir_name in enumerate(dir_name_list):

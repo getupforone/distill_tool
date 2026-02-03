@@ -3,16 +3,15 @@ import os
 import numpy as np
 import random
 
-dataset_paths = '../dataset'
-#dir_list_path='../dirlist'
-dir_list_path='../dirlist_3label'
-
-cnt_label_path='../cntlabel/threelabel.txt'
+dataset_paths = './dataset_rz'
+dir_list_path='./dirlist_rz'
+#cnt_label_path='../cntlabel/cntlabel.txt'
+cnt_label_path='./cntlabel/binlabel_rz.txt'
 
 train_ratio=80
 test_ratio=15
 val_ratio=5
-init_from_cntlabel = True 
+init_from_cntlabel = False 
 if os.path.isdir(dir_list_path):
     print("dir_list_path exists :{}".format(dir_list_path))
 else:
@@ -24,17 +23,16 @@ dir_path_lists = []
 dir_label_lists = []
 false_cnt = 0
 true_cnt = 0
-disrupt_cnt = 0
 
 num_of_dir = 0
 if init_from_cntlabel == False:
     dir_name_lists = np.sort(os.listdir(dataset_paths))
     num_of_dir = len(dir_name_lists)
     for idx, dir_name in enumerate(dir_name_lists):
-    	dir_path = os.path.join(dataset_paths,dir_name)
-    	dir_path = os.path.abspath(os.path.join(dataset_paths,dir_name))
-    	dir_path_lists.append(dir_path)
-    	print("dir_path_lists[{}]= {}".format(idx,dir_path))
+        dir_path = os.path.join(dataset_paths,dir_name)
+        dir_path = os.path.abspath(os.path.join(dataset_paths,dir_name))
+        dir_path_lists.append(dir_path)
+        print("dir_path_lists[{}]= {}".format(idx,dir_path))
 elif init_from_cntlabel == True:
     if os.path.exists(cnt_label_path):
         with open(cnt_label_path, 'r') as file_read_obj:
@@ -49,15 +47,13 @@ elif init_from_cntlabel == True:
                     true_cnt = true_cnt +1;
                 elif label=="False":
                     false_cnt = false_cnt +1;
-                elif label=="Disrupt":
-                    disrupt_cnt = disrupt_cnt +1;
                 dir_label_lists.append(label)
                 #print("path = {}/ label = {}\n".format(path,label))
     else:
         print("cnt_label_path {} does not exist".format(cnt_label_path))
     
 
-print("positive sample count = {} || negative sample count ={}|| disrupt sample count = {}".format(true_cnt,false_cnt,disrupt_cnt))
+print("positive sample count = {} || negative sample count ={}".format(true_cnt,false_cnt))
 print("num_of_dir = {}".format(num_of_dir))
 num_of_train_dir = int(num_of_dir/100*train_ratio)
 print("num_of_train_dir = {}".format(num_of_train_dir))
